@@ -42,7 +42,7 @@ stages:
         displayName: 'Archive Test build files'
         inputs:
           replaceExistingArchive: true
-          rootFolderOrFile: "$(workingDir)/build"
+          rootFolderOrFile: "$(workingDir)"
           includeRootFolder: false
           archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
       - task: PublishBuildArtifacts@1
