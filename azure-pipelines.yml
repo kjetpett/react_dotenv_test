@@ -1,0 +1,52 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+name: react_dotenv_test CI
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - 'master'
+
+pool:
+  vmImage: ubuntu-latest
+  
+variables:
+- name: appType
+  value: 'webApp'
+- name: workingDir
+  value: ''
+
+stages:
+- stage:
+  displayName: build 
+  jobs:
+    - job:
+      displayName: build Test
+      steps:
+      - script: |
+          npm install
+          npm install env-cmd --save
+        displayName: 'Install npm env-cmd'
+        workingDirectory: '$(workingDir)'
+      - task: Npm@1
+        displayName: 'npm build test'
+        inputs:
+          command: custom
+          workingDir: "$(workingDir)"
+          verbose: false
+          customCommand: 'run build:test'
+      - task: ArchiveFiles@2
+        displayName: 'Archive Test build files'
+        inputs:
+          replaceExistingArchive: true
+          rootFolderOrFile: "$(workingDir)/build"
+          includeRootFolder: false
+          archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: test'
+        inputs:
+          pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+          ArtifactName: 'test'
