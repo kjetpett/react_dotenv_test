@@ -16,6 +16,8 @@ pool:
 variables:
 - name: appType
   value: 'webApp'
+- name: workingDir
+  value: ''
 
 stages:
 - stage:
