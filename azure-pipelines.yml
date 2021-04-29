@@ -50,3 +50,28 @@ stages:
         inputs:
           pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
           ArtifactName: 'test'
+- stage:
+  displayName: 'Deploy to test environment'
+  jobs:
+  - deployment: Apply
+    displayName: 'Apply'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'test'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current'
+              artifactName: 'test'
+              targetPath: '$(Pipeline.Workspace)'
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure App Service'
+            inputs:
+              azureSubscription: 'Service Principal Skogvern Test'
+              appType: 'webApp'
+              appName: 'APP-MD-$(WebAppName)-Test'
+              package: '$(Pipeline.Workspace)/test/test_*.zip'
+              deploymentMethod: 'auto'
