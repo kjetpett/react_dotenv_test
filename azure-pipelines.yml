@@ -8,12 +8,23 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
-
+  demands: npm
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: '/'
+    verbose: true
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: '/'
+    customCommand: 'run build:test'
+- task: ArchiveFiles@2
+  displayName: 'archive files'
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)/build'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
