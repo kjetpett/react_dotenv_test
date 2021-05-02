@@ -1,78 +1,78 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-name: react_dotenv_test CI
+# # Starter pipeline
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
+# name: react_dotenv_test CI
 
-trigger:
-- master
+# trigger:
+# - master
 
-pool:
-  vmImage: ubuntu-latest
+# pool:
+#   vmImage: ubuntu-latest
   
-variables:
-  appType: 'webApp'
-  workingDir: ''
-  webAppName: react_dotenv_test
-  azureSubscription: 'Service Connection react-dotenv-test'
+# variables:
+#   appType: 'webApp'
+#   workingDir: ''
+#   webAppName: react_dotenv_test
+#   azureSubscription: 'Service Connection react-dotenv-test'
 
-stages:
-- stage:
-  displayName: build Test
-  jobs:
-    - job:
-      displayName: npm install / build / archive
-      steps:
-      - script: |
-          npm install
-          npm install env-cmd --save
-        displayName: 'Install npm env-cmd'
-        # workingDirectory: '$(workingDir)'
-      - task: Npm@1
-        displayName: 'npm build test'
-        inputs:
-          command: custom
-          workingDir: "$(workingDir)"
-          verbose: false
-          customCommand: 'run build:test'
-      - task: ArchiveFiles@2
-        displayName: 'Archive Test build files'
-        inputs:
-          replaceExistingArchive: true
-          # rootFolderOrFile: "$(workingDir)"
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
-          includeRootFolder: false
-          archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Artifact: test'
-        inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
-          ArtifactName: 'test'
-          # targetPath: '$(System.ArtifactsDirectory)'
-- stage:
-  displayName: 'Deploy to test environment'
-  jobs:
-  - deployment: deployTest
-    displayName: 'Deploy test'
-    pool:
-      vmImage: 'ubuntu-latest'
-    environment: testEnv
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@1
-            displayName: download Pileline Artifact
-            inputs:
-              # buildType: 'current'
-              artifactName: 'test'
-              targetPath: '$(Pipeline.Workspace)'
-              # downloadPath: '$(System.DefaultWorkingDirectory)'
-          - task: AzureWebApp@1
-            displayName: 'Deploy Azure App Service'
-            inputs:
-              azureSubscription: '$(azureSubscription)'
-              appType: 'webApp'
-              appName: 'APP-MD-$(webAppName)-Test'
-              # package: '$(Pipeline.Workspace)/test/test_*.zip'
-              # deploymentMethod: 'auto'
+# stages:
+# - stage:
+#   displayName: build Test
+#   jobs:
+#     - job:
+#       displayName: npm install / build / archive
+#       steps:
+#       - script: |
+#           npm install
+#           npm install env-cmd --save
+#         displayName: 'Install npm env-cmd'
+#         # workingDirectory: '$(workingDir)'
+#       - task: Npm@1
+#         displayName: 'npm build test'
+#         inputs:
+#           command: custom
+#           workingDir: "$(workingDir)"
+#           verbose: false
+#           customCommand: 'run build:test'
+#       - task: ArchiveFiles@2
+#         displayName: 'Archive Test build files'
+#         inputs:
+#           replaceExistingArchive: true
+#           # rootFolderOrFile: "$(workingDir)"
+#           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
+#           includeRootFolder: false
+#           archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+#       - task: PublishBuildArtifacts@1
+#         displayName: 'Publish Artifact: test'
+#         inputs:
+#           pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+#           ArtifactName: 'test'
+#           # targetPath: '$(System.ArtifactsDirectory)'
+# - stage:
+#   displayName: 'Deploy to test environment'
+#   jobs:
+#   - deployment: deployTest
+#     displayName: 'Deploy test'
+#     pool:
+#       vmImage: 'ubuntu-latest'
+#     environment: testEnv
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: DownloadPipelineArtifact@1
+#             displayName: download Pileline Artifact
+#             inputs:
+#               # buildType: 'current'
+#               artifactName: 'test'
+#               targetPath: '$(Pipeline.Workspace)'
+#               # downloadPath: '$(System.DefaultWorkingDirectory)'
+#           - task: AzureWebApp@1
+#             displayName: 'Deploy Azure App Service'
+#             inputs:
+#               azureSubscription: '$(azureSubscription)'
+#               appType: 'webApp'
+#               appName: 'APP-MD-$(webAppName)-Test'
+#               # package: '$(Pipeline.Workspace)/test/test_*.zip'
+#               # deploymentMethod: 'auto'
