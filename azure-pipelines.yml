@@ -13,7 +13,7 @@ pool:
 variables:
   appType: 'webApp'
   workingDir: ''
-  WebAppName: react_dotenv_test
+  webAppName: react_dotenv_test
   azureSubscription: 'Service Connection react-dotenv-test'
 
 stages:
@@ -27,7 +27,7 @@ stages:
           npm install
           npm install env-cmd --save
         displayName: 'Install npm env-cmd'
-        workingDirectory: '$(workingDir)'
+        # workingDirectory: '$(workingDir)'
       - task: Npm@1
         displayName: 'npm build test'
         inputs:
@@ -39,14 +39,16 @@ stages:
         displayName: 'Archive Test build files'
         inputs:
           replaceExistingArchive: true
-          rootFolderOrFile: "$(workingDir)"
+          # rootFolderOrFile: "$(workingDir)"
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
           includeRootFolder: false
-          archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+          # archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: test'
         inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
-          ArtifactName: 'test'
+          # pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+          # ArtifactName: 'test'
+          targetPath: '$(System.ArtifactsDirectory)'
 - stage:
   displayName: 'Deploy to test environment'
   jobs:
@@ -54,21 +56,22 @@ stages:
     displayName: 'Deploy test'
     pool:
       vmImage: 'ubuntu-latest'
-    environment: 'test'
+    environment: testEnv
     strategy:
       runOnce:
         deploy:
           steps:
           - task: DownloadPipelineArtifact@1
             inputs:
-              buildType: 'current'
-              artifactName: 'test'
-              targetPath: '$(Pipeline.Workspace)'
+              # buildType: 'current'
+              # artifactName: 'test'
+              # targetPath: '$(Pipeline.Workspace)'
+              downloadPath: '$(System.DefaultWorkingDirectory)'
           - task: AzureWebApp@1
             displayName: 'Deploy Azure App Service'
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: 'webApp'
-              appName: 'APP-MD-$(WebAppName)-Test'
-              package: '$(Pipeline.Workspace)/test/test_*.zip'
-              deploymentMethod: 'auto'
+              appName: 'APP-MD-$(webAppName)-Test'
+              # package: '$(Pipeline.Workspace)/test/test_*.zip'
+              # deploymentMethod: 'auto'
