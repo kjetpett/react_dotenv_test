@@ -40,15 +40,15 @@ stages:
         inputs:
           replaceExistingArchive: true
           # rootFolderOrFile: "$(workingDir)"
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
           includeRootFolder: false
-          # archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: test'
         inputs:
-          # pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
+          pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
           ArtifactName: 'test'
-          targetPath: '$(System.ArtifactsDirectory)'
+          # targetPath: '$(System.ArtifactsDirectory)'
 - stage:
   displayName: 'Deploy to test environment'
   jobs:
