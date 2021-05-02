@@ -62,11 +62,12 @@ stages:
         deploy:
           steps:
           - task: DownloadPipelineArtifact@1
+            displayName: download Pileline Artifact
             inputs:
               # buildType: 'current'
               # artifactName: 'test'
-              # targetPath: '$(Pipeline.Workspace)'
-              downloadPath: '$(System.DefaultWorkingDirectory)'
+              targetPath: '$(Pipeline.Workspace)'
+              # downloadPath: '$(System.DefaultWorkingDirectory)'
           - task: AzureWebApp@1
             displayName: 'Deploy Azure App Service'
             inputs:
