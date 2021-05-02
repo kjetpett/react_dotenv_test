@@ -30,10 +30,18 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
+    - script: |
+        npm install 
+        npm install env-cmd --save
+    - task: Npm@1
+      displayName: npm build:test
+      inputs:
+         command: custom
+         customCommand: 'run build:test'
     - task: ArchiveFiles@2
       displayName: 'Archive files'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build'
         includeRootFolder: false
         archiveType: zip
         archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
@@ -65,8 +73,8 @@ stages:
               packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
               # RuntimeStack: 'NODE|10.10'
               # StartupCommand: 'npm run start'
-              ScriptType: 'Inline Script'
-              InlineScript: |
-                npm install
-                npm install env-cmd --save
-                npm run build:test --if-present
+              # ScriptType: 'Inline Script'
+              # InlineScript: |
+              #   npm install
+              #   npm install env-cmd --save
+              #   npm run build:test --if-present
