@@ -5,26 +5,22 @@
 name: react_dotenv_test CI
 
 trigger:
-  batch: true
-  branches:
-    include:
-    - 'master'
+- master
 
 pool:
   vmImage: ubuntu-latest
   
 variables:
-- name: appType
-  value: 'webApp'
-- name: workingDir
-  value: ''
+  appType: 'webApp'
+  workingDir: ''
+  WebAppName: react_dotenv_test
 
 stages:
 - stage:
-  displayName: build 
+  displayName: build Test
   jobs:
     - job:
-      displayName: build Test
+      displayName: npm install / build / archive
       steps:
       - script: |
           npm install
@@ -53,8 +49,8 @@ stages:
 - stage:
   displayName: 'Deploy to test environment'
   jobs:
-  - deployment: Apply
-    displayName: 'Apply'
+  - deployment: deployTest
+    displayName: 'Deploy test'
     pool:
       vmImage: 'ubuntu-latest'
     environment: 'test'
