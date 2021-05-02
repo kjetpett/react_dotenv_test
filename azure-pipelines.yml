@@ -14,7 +14,7 @@ variables:
   appType: 'webApp'
   workingDir: ''
   WebAppName: react_dotenv_test
-  azureSubscription: xxx
+  azureSubscription: 'Service Connection react-dotenv-test'
 
 stages:
 - stage:
