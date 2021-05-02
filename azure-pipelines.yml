@@ -47,7 +47,7 @@ stages:
         displayName: 'Publish Artifact: test'
         inputs:
           # pathToPublish: '$(Build.ArtifactStagingDirectory)/test_$(Build.BuildId).zip'
-          # ArtifactName: 'test'
+          ArtifactName: 'test'
           targetPath: '$(System.ArtifactsDirectory)'
 - stage:
   displayName: 'Deploy to test environment'
@@ -65,7 +65,7 @@ stages:
             displayName: download Pileline Artifact
             inputs:
               # buildType: 'current'
-              # artifactName: 'test'
+              artifactName: 'test'
               targetPath: '$(Pipeline.Workspace)'
               # downloadPath: '$(System.DefaultWorkingDirectory)'
           - task: AzureWebApp@1
